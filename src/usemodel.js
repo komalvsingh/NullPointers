@@ -24,11 +24,11 @@ const userSchema = new mongoose.Schema(
     
     role: {
       type: String,
-      enum: ['store', 'orphanage'], // Roles for role-based navigation
+      enum: ['store', 'orphanage'], 
       default: 'store',
     },
   },
-  { timestamps: true } // Adds createdAt and updatedAt fields
+  { timestamps: true } 
 );
 
 const Users = mongoose.model('User', userSchema);

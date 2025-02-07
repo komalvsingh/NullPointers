@@ -5,17 +5,19 @@ import dotenv from "dotenv";
 import userrouter from "./src/user.js";
 import itemrouter from "./src/items.js";
 import postrouter from "./src/post.js";
+import cron from "node-cron";
+// import { checkExpiringProducts, matchExpiringItemsWithRequests } from "./ai_expiry_checker.js";
 
 const app = express();
 dotenv.config();
 
 app.use(cors());
-app.use(json());
-app.use(urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 5001;
 const databaseUrl = process.env.MONGODB_URL || "mongodb://localhost:27017/foodmanage";
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173/";
+
+
 
 app.use(
   cors({
@@ -23,6 +25,15 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(json());
+app.use(urlencoded({ extended: true }));
+
+// cron.schedule("0 0 * * *", () => {
+//   console.log("Running expiration check and recommendation match...");
+//   checkExpiringProducts();
+//   matchExpiringItemsWithRequests();
+// });
 
 mongoose
   .connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -39,10 +50,9 @@ app.listen(PORT, () => {
 app.get("/ping", (_req, res) => {
   return res.json({ msg: "Ping Successful" });
 });
+
 app.use("/api/user", userrouter);
 app.use("/api/items", itemrouter);
 app.use("/api/post", postrouter);
-
-
 
 export default app;

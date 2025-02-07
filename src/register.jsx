@@ -23,16 +23,30 @@ function Signin() {
     e.preventDefault();
     setError("");
     setIsLoading(true);
+    const formData = new FormData(e.target);
+
+    const username = formData.get("username");
+    const email = formData.get("email");
+    const password = formData.get("password");
+    const userType = formData.get("userType");
+    
 
     try {
-      const res = await axios.post("http://localhost:5001/api/user/register", values);
+      const res = await axios.post("http://localhost:5001/api/user/register", {
+        username,
+        email,
+        password,
+        userType,
+        
+      });
+
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred");
     } finally {
       setIsLoading(false);
     }
-  };
+  }; // 🔴 FIXED: Missing closing brace
 
   return (
     <Container>
@@ -48,6 +62,8 @@ function Signin() {
             <div className="brand">
               <h1>InnovateHub</h1>
             </div>
+            {error && <p className="error">{error}</p>} {/* 🔹 Show error message */}
+
             <input
               type="text"
               name="username"
@@ -168,6 +184,13 @@ const Container = styled.div`
       &:hover {
         background: linear-gradient(90deg, #1e5adf, #4c8bf5);
       }
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
     }
 
     span {
